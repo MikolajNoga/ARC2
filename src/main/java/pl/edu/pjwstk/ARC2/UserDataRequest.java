@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class UserDataRequest {
     private String name, lastName, location;
+    private int id;
 }
