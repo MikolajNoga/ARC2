@@ -1,9 +1,6 @@
 package pl.edu.pjwstk.ARC2;
 
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreOptions;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.*;
 import lombok.AllArgsConstructor;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
@@ -17,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class Controller {
 
+    private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+
+    // Create a Key factory to construct keys associated with this project.
+    private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("user");
     @GetMapping("/")
     public String helloPage() {
         return "Hello";
@@ -28,20 +29,36 @@ public class Controller {
         return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
     }
 
-    //testtest
+
+//    @PostMapping("/setUserData")
+//    public ResponseEntity<Entity> setUserData(UserDataRequest request) {
+//        Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+//        String kind = "User";
+//
+//        Key key = datastore.newKeyFactory().setKind(kind).newKey(request.getId());
+//        Entity user = Entity.newBuilder(key)
+//                .set("name", request.getName())
+//                .set("lastName", request.getLastName())
+//                .set("location", request.getLocation()).build();
+//        datastore.put(user);
+//        return ResponseEntity.status(HttpStatus.OK).body(datastore.get(key));
+//    }
 
     @PostMapping("/setUserData")
-    public ResponseEntity<Entity> setUserData(UserDataRequest request) {
-        Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-        String kind = "User";
-
-        Key key = datastore.newKeyFactory().setKind(kind).newKey(request.getId());
+    public void setUserData(UserDataRequest request) {
+        Key key = datastore.allocateId(keyFactory.newKey());
         Entity user = Entity.newBuilder(key)
-                .set("name", request.getName())
-                .set("lastName", request.getLastName())
-                .set("location", request.getLocation()).build();
+                .set(
+                        "firstName",
+                        StringValue.newBuilder(request.getName()).setExcludeFromIndexes(true).build())
+                .set(
+                        "lastName",
+                        StringValue.newBuilder(request.getLastName()).setExcludeFromIndexes(true).build())
+                .set(
+                        "Location",
+                        StringValue.newBuilder(request.getLastName()).setExcludeFromIndexes(true).build())
+                .build();
         datastore.put(user);
-        return ResponseEntity.status(HttpStatus.OK).body(datastore.get(key));
     }
 
 
