@@ -28,6 +28,8 @@ public class Controller {
         return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
     }
 
+    //testtest
+
     @PostMapping("/setUserData")
     public ResponseEntity<Entity> setUserData(UserDataRequest request) {
         Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
