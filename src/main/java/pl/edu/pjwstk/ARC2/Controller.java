@@ -46,7 +46,7 @@ public class Controller {
 
     // PostMapping -> 405 lub 500 w postman
     @GetMapping("/setUserData/{firstName}/{lastName}/{Location}")
-    public void setUserData(@PathVariable(value = "firstName")  String firstName, @PathVariable(value = "lastName") String lastName, @PathVariable(value = "Location") String location) {
+    public Key setUserData(@PathVariable(value = "firstName")  String firstName, @PathVariable(value = "lastName") String lastName, @PathVariable(value = "Location") String location) {
         Key key = datastore.allocateId(keyFactory.newKey());
         Entity user = Entity.newBuilder(key)
                 .set(
@@ -60,6 +60,7 @@ public class Controller {
                         StringValue.newBuilder(location).setExcludeFromIndexes(true).build())
                 .build();
         datastore.put(user);
+        return key;
     }
 
 
