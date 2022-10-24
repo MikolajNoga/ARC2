@@ -41,6 +41,27 @@ public class Controller {
         return listOfEntities;
     }
 
+    // to dziala
+//        @GetMapping("/getUserData")
+//    public String getUserData() {
+////        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
+//    public List<Entity> getUserData() {
+////        return datastore.get(id);
+//        List<Entity> listOfEntities = new ArrayList<>();
+//        Query<Entity> query = Query.newEntityQueryBuilder()
+//                .setKind("user")
+//                .build();
+//        QueryResults<Entity> results = datastore.run(query);
+//        String cos = "";
+////        String cos = "";
+//        while (results.hasNext()) {
+//            Entity currentEntity = results.next();
+//             cos += currentEntity.getString("firstName") + ", ";
+////             cos += currentEntity.getString("firstName") + ", ";
+//             listOfEntities.add(currentEntity);
+//    }
+//        return cos;
+
 //    @PostMapping("/setUserData")
 //    public ResponseEntity<Entity> setUserData(UserDataRequest request) {
 //        Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
