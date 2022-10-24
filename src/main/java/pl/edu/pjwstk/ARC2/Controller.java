@@ -23,8 +23,8 @@ public class Controller {
         return "Hello";
     }
 
-    @GetMapping("/getUserData/{id}")
-    public String getUserData(@PathVariable("id") Key id) {
+    @GetMapping("/getUserData")
+    public String getUserData() {
 //        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
 //        return datastore.get(id);
         Query<Entity> query = Query.newEntityQueryBuilder()
