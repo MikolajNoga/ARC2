@@ -61,6 +61,17 @@ public class Controller {
         datastore.put(user);
     }
 
+    @GetMapping("/Test/{firstName}")
+    public void Test(@PathVariable(value = "firstName") String firstName) {
+        Key key = datastore.allocateId(keyFactory.newKey());
+        Entity user = Entity.newBuilder(key)
+                .set(
+                        "firstName",
+                        StringValue.newBuilder(firstName).setExcludeFromIndexes(true).build())
+                .build();
+        datastore.put(user);
+    }
+
 
 //    @GetMapping("/setData")
 //    public void setUserData(){
