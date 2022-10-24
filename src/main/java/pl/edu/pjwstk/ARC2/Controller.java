@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 public class Controller {
@@ -24,19 +27,20 @@ public class Controller {
     }
 
     @GetMapping("/getUserData")
-    public String getUserData() {
-//        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
+    public List<Entity> getUserData() {
 //        return datastore.get(id);
+        List<Entity> listOfEntities = new ArrayList<>();
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("user")
                 .build();
         QueryResults<Entity> results = datastore.run(query);
-        String cos = "";
+//        String cos = "";
         while (results.hasNext()) {
             Entity currentEntity = results.next();
-             cos += currentEntity.getString("firstName") + ", ";
+//             cos += currentEntity.getString("firstName") + ", ";
+             listOfEntities.add(currentEntity);
     }
-        return cos;
+        return listOfEntities;
     }
 
 //    @PostMapping("/setUserData")
