@@ -24,11 +24,20 @@ public class Controller {
     }
 
     @GetMapping("/getUserData/{id}")
-    public Entity getUserData(@PathVariable("id") Key id) {
+    public String getUserData(@PathVariable("id") Key id) {
 //        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
-        return datastore.get(id);
+//        return datastore.get(id);
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("user")
+                .build();
+        QueryResults<Entity> results = datastore.run(query);
+        String cos = "";
+        while (results.hasNext()) {
+            Entity currentEntity = results.next();
+             cos += currentEntity.getString("firstName") + ", ";
     }
-
+        return cos;
+    }
 
 //    @PostMapping("/setUserData")
 //    public ResponseEntity<Entity> setUserData(UserDataRequest request) {
