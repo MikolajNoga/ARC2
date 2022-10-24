@@ -27,18 +27,16 @@ public class Controller {
     }
 
     @GetMapping("/getUserData")
-    public List<Entity> getUserData() {
+    public List<UserDataRequest> getUserData() {
 //        return datastore.get(id);
-        List<Entity> listOfEntities = new ArrayList<>();
+        List<UserDataRequest> listOfEntities = new ArrayList<>();
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("user")
                 .build();
         QueryResults<Entity> results = datastore.run(query);
-//        String cos = "";
         while (results.hasNext()) {
             Entity currentEntity = results.next();
-//             cos += currentEntity.getString("firstName") + ", ";
-             listOfEntities.add(currentEntity);
+             listOfEntities.add(new UserDataRequest(currentEntity.getString("firstName"),currentEntity.getString("lastName"),currentEntity.getString("location")));
     }
         return listOfEntities;
     }
