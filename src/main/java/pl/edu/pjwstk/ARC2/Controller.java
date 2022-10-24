@@ -24,9 +24,9 @@ public class Controller {
     }
 
     @GetMapping("/getUserData/{id}")
-    public Entity getUserData(@PathVariable("id") String id) {
-        Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
+    public Entity getUserData(@PathVariable("id") Key id) {
+//        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
+        return datastore.get(id);
     }
 
 
@@ -44,33 +44,26 @@ public class Controller {
 //        return ResponseEntity.status(HttpStatus.OK).body(datastore.get(key));
 //    }
 
-    @PostMapping("/setUserData")
-    public void setUserData(UserDataRequest request) {
-        Key key = datastore.allocateId(keyFactory.newKey());
-        Entity user = Entity.newBuilder(key)
-                .set(
-                        "firstName",
-                        StringValue.newBuilder(request.getName()).setExcludeFromIndexes(true).build())
-                .set(
-                        "lastName",
-                        StringValue.newBuilder(request.getLastName()).setExcludeFromIndexes(true).build())
-                .set(
-                        "Location",
-                        StringValue.newBuilder(request.getLastName()).setExcludeFromIndexes(true).build())
-                .build();
-        datastore.put(user);
-    }
-
-    @GetMapping("/Test/{firstName}")
-    public void Test(@PathVariable(value = "firstName") String firstName) {
+    // PostMapping -> 405 lub 500 w postman
+    @GetMapping("/setUserData/{firstName}/{lastName}/{Location}")
+    public void setUserData(@PathVariable(value = "firstName")  String firstName, @PathVariable(value = "lastName") String lastName, @PathVariable(value = "Location") String location) {
         Key key = datastore.allocateId(keyFactory.newKey());
         Entity user = Entity.newBuilder(key)
                 .set(
                         "firstName",
                         StringValue.newBuilder(firstName).setExcludeFromIndexes(true).build())
+                .set(
+                        "lastName",
+                        StringValue.newBuilder(lastName).setExcludeFromIndexes(true).build())
+                .set(
+                        "Location",
+                        StringValue.newBuilder(location).setExcludeFromIndexes(true).build())
                 .build();
         datastore.put(user);
     }
+
+
+
 
 
 //    @GetMapping("/setData")
