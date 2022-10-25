@@ -21,13 +21,14 @@ public class Controller {
 
     // Create a Key factory to construct keys associated with this project.
     private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("user");
+
     @GetMapping("/")
     public String helloPage() {
         return "Hello";
     }
 
     @GetMapping("/getUserData")
-    public List<UserDataRequest> getUserData() {
+    public String getUserData() {
 //        return datastore.get(id);
         List<UserDataRequest> listOfEntities = new ArrayList<>();
         Query<Entity> query = Query.newEntityQueryBuilder()
@@ -36,9 +37,9 @@ public class Controller {
         QueryResults<Entity> results = datastore.run(query);
         while (results.hasNext()) {
             Entity currentEntity = results.next();
-             listOfEntities.add(new UserDataRequest(currentEntity.getString("firstName"),currentEntity.getString("lastName"),currentEntity.getString("location")));
-    }
-        return listOfEntities;
+            listOfEntities.add(new UserDataRequest(currentEntity.getString("firstName"), currentEntity.getString("lastName"), currentEntity.getString("location")));
+        }
+        return listOfEntities.toString();
     }
 
     // to dziala
@@ -52,12 +53,12 @@ public class Controller {
 //                .setKind("user")
 //                .build();
 //        QueryResults<Entity> results = datastore.run(query);
-//        String cos = "";
-////        String cos = "";
+//        String str = "";
+////        String str = "";
 //        while (results.hasNext()) {
 //            Entity currentEntity = results.next();
-//             cos += currentEntity.getString("firstName") + ", ";
-////             cos += currentEntity.getString("firstName") + ", ";
+//             str += currentEntity.getString("firstName") + ", ";
+////             str += currentEntity.getString("firstName") + ", ";
 //             listOfEntities.add(currentEntity);
 //    }
 //        return cos;
@@ -77,8 +78,10 @@ public class Controller {
 //    }
 
     // PostMapping -> 405 lub 500 w postman
+
+
     @GetMapping("/setUserData/{firstName}/{lastName}/{Location}")
-    public Key setUserData(@PathVariable(value = "firstName")  String firstName, @PathVariable(value = "lastName") String lastName, @PathVariable(value = "Location") String location) {
+    public Key setUserData(@PathVariable(value = "firstName") String firstName, @PathVariable(value = "lastName") String lastName, @PathVariable(value = "Location") String location) {
         Key key = datastore.allocateId(keyFactory.newKey());
         Entity user = Entity.newBuilder(key)
                 .set(
@@ -94,25 +97,4 @@ public class Controller {
         datastore.put(user);
         return key;
     }
-
-
-
-
-
-//    @GetMapping("/setData")
-//    public void setUserData(){
-//
-//        String kind = "Task";
-//        // The name/ID for the new entity
-//        String name = "sampletask1";
-//        // The Cloud Datastore key for the new entity
-//        Key taskKey = datastore.newKeyFactory().setKind(kind).newKey(name);
-//        Entity task = Entity.newBuilder(taskKey).set("description", "Buy milk").build();
-//
-//        datastore.put(task);
-//        System.out.printf("Saved %s: %s%n", task.getKey().getName(), task.getString("description"));
-//
-//        Entity retrieved = datastore.get(taskKey);
-//        System.out.printf("Retrieved %s: %s%n", taskKey.getName(), retrieved.getString("description"));
-//    }
 }
