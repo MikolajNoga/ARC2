@@ -27,41 +27,35 @@ public class Controller {
         return "Hello";
     }
 
-    @GetMapping("/getUserData")
-    public String getUserData() {
-//        return datastore.get(id);
-        List<UserDataRequest> listOfEntities = new ArrayList<>();
-        Query<Entity> query = Query.newEntityQueryBuilder()
-                .setKind("user")
-                .build();
-        QueryResults<Entity> results = datastore.run(query);
-        while (results.hasNext()) {
-            Entity currentEntity = results.next();
-            listOfEntities.add(new UserDataRequest(currentEntity.getString("firstName"), currentEntity.getString("lastName"), currentEntity.getString("location")));
-        }
-        return listOfEntities.toString();
-    }
-
-    // to dziala
-//        @GetMapping("/getUserData")
+//    @GetMapping("/getUserData")
 //    public String getUserData() {
-////        return datastore.get(datastore.newKeyFactory().setKind("user").newKey(id));
-//    public List<Entity> getUserData() {
 ////        return datastore.get(id);
-//        List<Entity> listOfEntities = new ArrayList<>();
+//        List<UserDataRequest> listOfEntities = new ArrayList<>();
 //        Query<Entity> query = Query.newEntityQueryBuilder()
 //                .setKind("user")
 //                .build();
 //        QueryResults<Entity> results = datastore.run(query);
-//        String str = "";
-////        String str = "";
 //        while (results.hasNext()) {
 //            Entity currentEntity = results.next();
-//             str += currentEntity.getString("firstName") + ", ";
-////             str += currentEntity.getString("firstName") + ", ";
-//             listOfEntities.add(currentEntity);
+//            listOfEntities.add(new UserDataRequest(currentEntity.getString("firstName"), currentEntity.getString("lastName"), currentEntity.getString("location")));
+//        }
+//        return listOfEntities.toString();
 //    }
-//        return cos;
+
+    // to dziala
+    @GetMapping("/getUserData")
+    public String getUserData() {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("user")
+                .build();
+        QueryResults<Entity> results = datastore.run(query);
+        String str = "";
+        while (results.hasNext()) {
+            Entity currentEntity = results.next();
+            str += currentEntity.getString("firstName") + ", ";
+        }
+        return str;
+    }
 
 //    @PostMapping("/setUserData")
 //    public ResponseEntity<Entity> setUserData(UserDataRequest request) {
