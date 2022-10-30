@@ -13,9 +13,9 @@ public class UserService implements UserRepository{
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("user");
 
-    private QueryResults<Entity> query(String kind){
+    private QueryResults<Entity> query(){
         Query<Entity> query = Query.newEntityQueryBuilder()
-                .setKind(kind)
+                .setKind("user")
                 .build();
         return datastore.run(query);
     }
@@ -33,37 +33,42 @@ public class UserService implements UserRepository{
                 .set(
                         "locationY",
                         StringValue.newBuilder(locationY).setExcludeFromIndexes(true).build())
-                .build();
+                .set(
+                        "isSetToMeet",
+                        BooleanValue.newBuilder(false).setExcludeFromIndexes(true).build()
+                        ).build();
         datastore.put(user);
         return true;
     }
 
     @Override
-    public String getUserData(String username) {
-        QueryResults<Entity> results = query("user");
-        String str = "Nie znaleziono użytkownika";
+    public User getUserData(String username) {
+        QueryResults<Entity> results = query();
         while (results.hasNext()){
             Entity currentEntity = results.next();
             if (currentEntity.getString("username").equals(username)){
-                str = "{" + currentEntity.getString("username") + ", "
-                        + currentEntity.getString("locationX") + ", "
-                        + currentEntity.getString("locationX") + "}";
+                return new User(
+                        currentEntity.getString("username"),
+                        currentEntity.getString("locationX"),
+                        currentEntity.getString("locationX"),
+                        currentEntity.getBoolean("isSetToMeet"));
             }
         }
-        return str;
+        return null;
     }
 
     @Override
-    public String getUsersList() {
-        List<UserDataRequest> listOfEntities = new ArrayList<>();
-        QueryResults<Entity> results = query("user");
+    public List<User> getUsersList() {
+        List<User> listOfEntities = new ArrayList<>();
+        QueryResults<Entity> results = query();
         while (results.hasNext()) {
             Entity currentEntity = results.next();
-            listOfEntities.add(new UserDataRequest(
+            listOfEntities.add(new User(
                     currentEntity.getString("username"),
                     currentEntity.getString("locationX"),
-                    currentEntity.getString("locationX")));
+                    currentEntity.getString("locationX"),
+                    currentEntity.getBoolean("isSetToMeet")));
         }
-        return listOfEntities.toString();
+        return listOfEntities;
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 public class UserController {
@@ -23,9 +25,13 @@ public class UserController {
     }
 
     @GetMapping("/getUsersList")
-    public String getUsersLists(){
+    public List<User> getUsersLists(){
         return userService.getUsersList();
     }
 
+    @GetMapping("/getUserData/{username}")
+    public User getUserData(String username){
+        return userService.getUserData(username);
+    }
 
 }
