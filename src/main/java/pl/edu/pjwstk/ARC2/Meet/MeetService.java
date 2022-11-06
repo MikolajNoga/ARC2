@@ -51,28 +51,30 @@ public class MeetService implements MeetRepository{
         //  Oraz użytkownikcy zapisani jako lista [getListOfParticipantsInMeet używa lisy więc przy innym roziązaniu do zmiany tamta metoda]
 
         Key key = datastore.allocateId(keyFactory.newKey());
-        Key taskKey1 = null;
-        for (int i = 0 ; i < userAddedToMeet.size(); i++) {
-             taskKey1 =
+        Key taskKey1 =
                     datastore
                             .newKeyFactory()
-                            .addAncestors(PathElement.of("user", String.valueOf(userAddedToMeet.get(i))))
-                            .setKind("user")
-                            .newKey("sampleTask");
-        }
-        if(taskKey1 != null) {
+                            .addAncestors(PathElement.of("user", userAddedToMeet.toString()))
+                            .setKind("meet")
+                            .newKey("newMeet");
+
             Entity meet = Entity.newBuilder(taskKey1)
                     .set(
                             "username",
                             StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
                     .set(
                             "numberOfParticipants",
-                            StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
+                            StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true)
+
+                                    .build())
+                    .set(
+                            "range",
+                            StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
 
                     .build();
             datastore.put(meet);
-        }
-        return null;
+
+        return "";
     }
 
     @Override
