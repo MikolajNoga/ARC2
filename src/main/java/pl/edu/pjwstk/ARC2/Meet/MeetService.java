@@ -51,20 +51,27 @@ public class MeetService implements MeetRepository{
         //  Oraz użytkownikcy zapisani jako lista [getListOfParticipantsInMeet używa lisy więc przy innym roziązaniu do zmiany tamta metoda]
 
         Key key = datastore.allocateId(keyFactory.newKey());
+        Key taskKey1 = null;
+        for (int i = 0 ; i < userAddedToMeet.size(); i++) {
+             taskKey1 =
+                    datastore
+                            .newKeyFactory()
+                            .addAncestors(PathElement.of("user", String.valueOf(userAddedToMeet.get(i))))
+                            .setKind("user")
+                            .newKey("sampleTask");
+        }
+        if(taskKey1 != null) {
+            Entity meet = Entity.newBuilder(taskKey1)
+                    .set(
+                            "username",
+                            StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                    .set(
+                            "numberOfParticipants",
+                            StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
 
-        Key taskKey1 =
-                datastore
-                        .newKeyFactory()
-                        .addAncestors(PathElement.of("TaskList", "default"))
-                        .setKind("Task")
-                        .newKey("sampleTask");
-
-        KeyFactory keyFactory =
-                datastore
-                        .newKeyFactory()
-                        .addAncestors(PathElement.of("User", "Alice"), PathElement.of("TaskList", "default"))
-                        .setKind("Task");
-        Key taskKey = keyFactory.newKey("sampleTask");
+                    .build();
+            datastore.put(meet);
+        }
         return null;
     }
 
