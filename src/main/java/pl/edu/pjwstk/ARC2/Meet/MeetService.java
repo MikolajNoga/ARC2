@@ -51,6 +51,20 @@ public class MeetService implements MeetRepository{
         //  Oraz użytkownikcy zapisani jako lista [getListOfParticipantsInMeet używa lisy więc przy innym roziązaniu do zmiany tamta metoda]
 
         Key key = datastore.allocateId(keyFactory.newKey());
+
+        Key taskKey1 =
+                datastore
+                        .newKeyFactory()
+                        .addAncestors(PathElement.of("TaskList", "default"))
+                        .setKind("Task")
+                        .newKey("sampleTask");
+
+        KeyFactory keyFactory =
+                datastore
+                        .newKeyFactory()
+                        .addAncestors(PathElement.of("User", "Alice"), PathElement.of("TaskList", "default"))
+                        .setKind("Task");
+        Key taskKey = keyFactory.newKey("sampleTask");
         return null;
     }
 
@@ -58,6 +72,7 @@ public class MeetService implements MeetRepository{
     public int getNumberOfParticipantsInMeet(String meetId) {
         return getListOfParticipantsInMeet(meetId).size();
     }
+
 
     @Override
     public List<Value<?>> getListOfParticipantsInMeet(String meetId) {

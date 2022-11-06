@@ -22,7 +22,13 @@ public class UserService implements UserRepository{
 
     @Override
     public boolean setUserData(String username, String locationX, String locationY) {
-        Key key = datastore.allocateId(keyFactory.newKey());
+        KeyFactory keyFactory1 =
+                datastore
+                        .newKeyFactory()
+                        .addAncestors(PathElement.of("User", "Alice"), PathElement.of("TaskList", "default"))
+                        .setKind("user");
+        Key key = datastore.allocateId(keyFactory1.newKey());
+
         Entity user = Entity.newBuilder(key)
                 .set(
                         "username",
@@ -36,7 +42,8 @@ public class UserService implements UserRepository{
                 .set(
                         "isSetToMeet",
                         BooleanValue.newBuilder(false).setExcludeFromIndexes(true).build()
-                        ).build();
+                        )
+                .build();
         datastore.put(user);
         return true;
     }
