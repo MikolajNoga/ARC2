@@ -27,12 +27,12 @@ public class MeetService implements MeetRepository{
         return Math.sqrt((Math.pow((x2 - x1), 2.0) + Math.pow((y2 - y1), 2.0))) <= range;
     }
 
+    // TODO error com.google.cloud.datastore.DatastoreException: No such property isSetToMeet
     @Override
     public String createMeet(String username, int numberOfParticipants, double range) {
         User user = userService.getUserData(username);
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
-
         List<User> allUsers = userService.getUsersList();
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0 , nop = 1; i < allUsers.size(); i++){
