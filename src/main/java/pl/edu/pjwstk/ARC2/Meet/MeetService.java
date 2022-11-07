@@ -2,6 +2,7 @@ package pl.edu.pjwstk.ARC2.Meet;
 
 import com.google.cloud.datastore.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.ARC2.User.User;
 import pl.edu.pjwstk.ARC2.User.UserService;
@@ -15,9 +16,10 @@ public class MeetService implements MeetRepository {
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private final UserService userService;
 
-    private QueryResults<Entity> query() {
+    private QueryResults<Entity> query(String username) {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("meet")
+                .setFilter(StructuredQuery.PropertyFilter.eq("username", username))
                 .build();
         return datastore.run(query);
     }
@@ -37,19 +39,20 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public String createMeet(String username, int numberOfParticipants, double range) {
+    public HttpStatus createMeet(String username, int numberOfParticipants, double range) {
         User user = userService.getUserData(username);
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
+        setUserMeetAttendance(userService.getUserEntity(username));
+
         List<User> allUsers = userService.getUsersList();
 
-        setUserMeetAttendance(userService.getUserEntity(username));
-        user.setSetToMeet(true);
+//        user.setSetToMeet(true);
 
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
             if (nop >= numberOfParticipants) break;
-            if (!userAddedToMeet.contains(allUsers.get(i)) &&
+            if (!userAddedToMeet.contains(allUsers.get(i)) && allUsers.get(i).isSetToMeet() &&
                     isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
                             allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
                 userAddedToMeet.add(allUsers.get(i));
@@ -84,11 +87,8 @@ public class MeetService implements MeetRepository {
             if (!entity.getString("username").equals(username)) setUserMeetAttendance(entity);
         }
 
-        return "";
+        return HttpStatus.OK;
     }
-
-
-
 
     @Override
     public int getNumberOfParticipantsInMeet(String meetId) {
@@ -98,7 +98,7 @@ public class MeetService implements MeetRepository {
 
     @Override
     public List<Value<?>> getListOfParticipantsInMeet(String meetId) {
-        QueryResults<Entity> results = query();
+        QueryResults<Entity> results = query("");
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             if (currentEntity.getString("id").equals(meetId))
@@ -108,8 +108,15 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public Entity getMeet(long id) {
-        return datastore.get(datastore.newKeyFactory().setKind("meet").newKey(id));
+    public Entity getMeet(String username) {
+        QueryResults<Entity> results = query(username);
+        while (results.hasNext()) {
+            Entity currentEntity = results.next();
+            if (currentEntity.getString("username").equals(username)) {
+                return currentEntity;
+            }
+        }
+        return null;
     }
 
 
