@@ -1,5 +1,6 @@
 package pl.edu.pjwstk.ARC2.Meet;
 
+import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Value;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,6 @@ public interface MeetRepository {
 
     List<Value<?>> getListOfParticipantsInMeet(String meetId);
 
-
+    Entity getMeet(long id);
 
 }

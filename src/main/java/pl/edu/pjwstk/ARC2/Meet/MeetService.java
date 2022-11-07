@@ -13,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetService implements MeetRepository {
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-    private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("meet");
     private final UserService userService;
 
     private QueryResults<Entity> query() {
@@ -45,6 +44,7 @@ public class MeetService implements MeetRepository {
         List<User> allUsers = userService.getUsersList();
 
         setUserMeetAttendance(userService.getUserEntity(username));
+        user.setSetToMeet(true);
 
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
@@ -86,6 +86,10 @@ public class MeetService implements MeetRepository {
 
         return "";
     }
+
+
+
+
     @Override
     public int getNumberOfParticipantsInMeet(String meetId) {
         return getListOfParticipantsInMeet(meetId).size();
@@ -101,6 +105,11 @@ public class MeetService implements MeetRepository {
                 return currentEntity.getList("participants");
         }
         return null;
+    }
+
+    @Override
+    public Entity getMeet(long id) {
+        return datastore.get(datastore.newKeyFactory().setKind("meet").newKey(id));
     }
 
 
