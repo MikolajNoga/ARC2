@@ -52,7 +52,7 @@ public class MeetService implements MeetRepository {
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
             if (nop >= numberOfParticipants) break;
-            if (!userAddedToMeet.contains(allUsers.get(i)) && allUsers.get(i).isSetToMeet() &&
+            if (!userAddedToMeet.contains(allUsers.get(i)) && !allUsers.get(i).isSetToMeet() &&
                     isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
                             allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
                 userAddedToMeet.add(allUsers.get(i));
