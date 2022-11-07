@@ -23,6 +23,8 @@ public class MeetService implements MeetRepository{
         return datastore.run(query);
     }
 
+
+
     private boolean isDistanceCloseEnough(double range, int x1, int y1, int x2, int y2){
         return Math.sqrt((Math.pow((x2 - x1), 2.0) + Math.pow((y2 - y1), 2.0))) <= range;
     }
@@ -49,8 +51,6 @@ public class MeetService implements MeetRepository{
         //  oraz kto tam jest na bazie usernameów, oraz update danych w użykownikach jako isSetToMeet na true.
         //  Meet musi posiadać jakieś unikatowe id.
         //  Oraz użytkownikcy zapisani jako lista [getListOfParticipantsInMeet używa lisy więc przy innym roziązaniu do zmiany tamta metoda]
-
-        Key key = datastore.allocateId(keyFactory.newKey());
         Key taskKey1 =
                     datastore
                             .newKeyFactory()
@@ -73,9 +73,21 @@ public class MeetService implements MeetRepository{
 
                     .build();
             datastore.put(meet);
+        for (User value : userAddedToMeet) {
+
+            Entity entity = userService.getUserEntity(value.getUsername());
+            if (entity != null) {
+                entity = Entity.newBuilder(entity)
+                        .set("isSetToMeet", true)
+                        .build();
+                datastore.update(entity);
+            }
+        }
 
         return "";
     }
+
+
 
     @Override
     public int getNumberOfParticipantsInMeet(String meetId) {
@@ -93,4 +105,6 @@ public class MeetService implements MeetRepository{
         }
         return null;
     }
+
+
 }

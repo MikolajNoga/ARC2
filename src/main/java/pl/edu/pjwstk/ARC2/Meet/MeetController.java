@@ -1,7 +1,6 @@
 package pl.edu.pjwstk.ARC2.Meet;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,4 +18,12 @@ public class MeetController {
             @PathVariable String username){
         return meetService.createMeet(username,Integer.parseInt(numberOfParticipants),Double.parseDouble(range));
     }
+
+//    @GetMapping("/addUserToMeet/{username}")
+//    public String addUSerToMeet(
+//            @PathVariable String username
+//    ) {
+//        return meetService.addUserToMeet(username);
+//
+//    }
 }

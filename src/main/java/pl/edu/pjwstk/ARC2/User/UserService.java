@@ -52,8 +52,19 @@ public class UserService implements UserRepository{
                 return new User(
                         currentEntity.getString("username"),
                         currentEntity.getString("locationX"),
-                        currentEntity.getString("locationX"),
+                        currentEntity.getString("locationY"),
                         currentEntity.getBoolean("isSetToMeet"));
+            }
+        }
+        return null;
+    }
+
+    public Entity getUserEntity(String username) {
+        QueryResults<Entity> results = query();
+        while (results.hasNext()){
+            Entity currentEntity = results.next();
+            if (currentEntity.getString("username").equals(username)){
+                return currentEntity;
             }
         }
         return null;
@@ -68,7 +79,7 @@ public class UserService implements UserRepository{
             listOfEntities.add(new User(
                     currentEntity.getString("username"),
                     currentEntity.getString("locationX"),
-                    currentEntity.getString("locationX"),
+                    currentEntity.getString("locationY"),
                     currentEntity.getBoolean("isSetToMeet")));
         }
         return listOfEntities;

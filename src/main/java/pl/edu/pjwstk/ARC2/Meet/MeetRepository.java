@@ -10,4 +10,5 @@ public interface MeetRepository {
     String createMeet(String username, int numberOfParticipants, double range);
     int getNumberOfParticipantsInMeet(String meetId);
     List<Value<?>> getListOfParticipantsInMeet(String meetId);
+
 }
