@@ -7,6 +7,8 @@ import java.util.List;
 @Repository
 public interface UserRepository {
     boolean setUserData(String username, String locationX, String locationY);
+
     User getUserData(String username);
+
     List<User> getUsersList();
 }

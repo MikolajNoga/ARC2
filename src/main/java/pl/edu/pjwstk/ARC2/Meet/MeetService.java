@@ -11,84 +11,81 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MeetService implements MeetRepository{
+public class MeetService implements MeetRepository {
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("meet");
     private final UserService userService;
 
-    private QueryResults<Entity> query(){
+    private QueryResults<Entity> query() {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("meet")
                 .build();
         return datastore.run(query);
     }
 
+    private void setUserMeetAttendance(Entity entity){
+        if (entity != null) {
+            entity = Entity.newBuilder(entity)
+                    .set("isSetToMeet", true)
+                    .build();
+            datastore.update(entity);
+        }
+    }
 
 
-    private boolean isDistanceCloseEnough(double range, int x1, int y1, int x2, int y2){
+    private boolean isDistanceCloseEnough(double range, int x1, int y1, int x2, int y2) {
         return Math.sqrt((Math.pow((x2 - x1), 2.0) + Math.pow((y2 - y1), 2.0))) <= range;
     }
 
-    // TODO error com.google.cloud.datastore.DatastoreException: No such property isSetToMeet
     @Override
     public String createMeet(String username, int numberOfParticipants, double range) {
         User user = userService.getUserData(username);
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
         List<User> allUsers = userService.getUsersList();
+
+        setUserMeetAttendance(userService.getUserEntity(username));
+
         // nop is number of participants which track number of added to meet in for loop
-        for (int i = 0 , nop = 1; i < allUsers.size(); i++){
+        for (int i = 0, nop = 1; i < allUsers.size(); i++) {
             if (nop >= numberOfParticipants) break;
             if (!userAddedToMeet.contains(allUsers.get(i)) &&
                     isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
-                            allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())){
+                            allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
                 userAddedToMeet.add(allUsers.get(i));
                 nop++;
             }
         }
-
-        // TODO: 30.10.2022 Dodanie meeta w którym znajdzie się liczba członków (userAddedToMeet.size())
-        //  oraz kto tam jest na bazie usernameów, oraz update danych w użykownikach jako isSetToMeet na true.
-        //  Meet musi posiadać jakieś unikatowe id.
-        //  Oraz użytkownikcy zapisani jako lista [getListOfParticipantsInMeet używa lisy więc przy innym roziązaniu do zmiany tamta metoda]
         Key taskKey1 =
-                    datastore
-                            .newKeyFactory()
-                            .addAncestors(PathElement.of("user", userAddedToMeet.toString()))
-                            .setKind("meet")
-                            .newKey("newMeet");
+                datastore
+                        .newKeyFactory()
+                        .addAncestors(PathElement.of("user", userAddedToMeet.toString()))
+                        .setKind("meet")
+                        .newKey("newMeet");
 
-            Entity meet = Entity.newBuilder(taskKey1)
-                    .set(
-                            "username",
-                            StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
-                    .set(
-                            "numberOfParticipants",
-                            StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true)
+        Entity meet = Entity.newBuilder(taskKey1)
+                .set(
+                        "username",
+                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                .set(
+                        "numberOfParticipants",
+                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true)
 
-                                    .build())
-                    .set(
-                            "range",
-                            StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
+                                .build())
+                .set(
+                        "range",
+                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
 
-                    .build();
-            datastore.put(meet);
+                .build();
+        datastore.put(meet);
+
         for (User value : userAddedToMeet) {
-
             Entity entity = userService.getUserEntity(value.getUsername());
-            if (entity != null) {
-                entity = Entity.newBuilder(entity)
-                        .set("isSetToMeet", true)
-                        .build();
-                datastore.update(entity);
-            }
+            if (!entity.getString("username").equals(username)) setUserMeetAttendance(entity);
         }
 
         return "";
     }
-
-
-
     @Override
     public int getNumberOfParticipantsInMeet(String meetId) {
         return getListOfParticipantsInMeet(meetId).size();
@@ -98,7 +95,7 @@ public class MeetService implements MeetRepository{
     @Override
     public List<Value<?>> getListOfParticipantsInMeet(String meetId) {
         QueryResults<Entity> results = query();
-        while (results.hasNext()){
+        while (results.hasNext()) {
             Entity currentEntity = results.next();
             if (currentEntity.getString("id").equals(meetId))
                 return currentEntity.getList("participants");

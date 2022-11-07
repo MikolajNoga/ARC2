@@ -16,11 +16,11 @@ public class User {
         return "User{ " + username + " : " + locationX + " : " + locationY + " : " + isSetToMeet + " }";
     }
 
-    public int getIntVersionOfLocationX(){
+    public int getIntVersionOfLocationX() {
         return Integer.parseInt(locationX);
     }
 
-    public int getIntVersionOfLocationY(){
+    public int getIntVersionOfLocationY() {
         return Integer.parseInt(locationY);
     }
 }

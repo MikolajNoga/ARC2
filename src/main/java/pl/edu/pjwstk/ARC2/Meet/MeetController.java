@@ -15,15 +15,7 @@ public class MeetController {
     public String createMeet(
             @PathVariable String numberOfParticipants,
             @PathVariable String range,
-            @PathVariable String username){
-        return meetService.createMeet(username,Integer.parseInt(numberOfParticipants),Double.parseDouble(range));
+            @PathVariable String username) {
+        return meetService.createMeet(username, Integer.parseInt(numberOfParticipants), Double.parseDouble(range));
     }
-
-//    @GetMapping("/addUserToMeet/{username}")
-//    public String addUSerToMeet(
-//            @PathVariable String username
-//    ) {
-//        return meetService.addUserToMeet(username);
-//
-//    }
 }
