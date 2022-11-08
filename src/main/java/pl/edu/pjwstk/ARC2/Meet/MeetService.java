@@ -43,6 +43,7 @@ public class MeetService implements MeetRepository {
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
         setUserMeetAttendance(userService.getUserEntity(username));
+        user.setSetToMeet(true);
 
         List<User> allUsers = userService.getUsersList();
 
@@ -52,8 +53,6 @@ public class MeetService implements MeetRepository {
             if (!userAddedToMeet.contains(allUsers.get(i)) && !allUsers.get(i).isSetToMeet() &&
                     isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
                             allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
-
-
                 userAddedToMeet.add(allUsers.get(i));
                 nop++;
             }
@@ -61,7 +60,10 @@ public class MeetService implements MeetRepository {
 
         for (User value : userAddedToMeet) {
             Entity entity = userService.getUserEntity(value.getUsername());
-            if (!entity.getString("username").equals(username)) setUserMeetAttendance(entity);
+            if (!entity.getString("username").equals(username)) {
+                setUserMeetAttendance(entity);
+                value.setSetToMeet(true);
+            }
         }
 
         Key taskKey1 =
@@ -74,16 +76,16 @@ public class MeetService implements MeetRepository {
         Entity meet = Entity.newBuilder(taskKey1)
                 .set(
                         "username",
-                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                        username)
+//                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
                 .set(
                         "numberOfParticipants",
-                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true)
-
-                                .build())
+                        numberOfParticipants)
+//                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
                 .set(
                         "range",
-                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
-
+                        range)
+//                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
                 .build();
         datastore.put(meet);
 
@@ -108,12 +110,17 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public Entity getMeet(String username) {
+    public Meet getMeet(String username) {
         QueryResults<Entity> results = query();
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             if (currentEntity.getString("username").equals(username)) {
-                return currentEntity;
+                return new Meet(
+                        currentEntity.getKey().getName(),
+                        currentEntity.getString("username"),
+                        (int) currentEntity.getLong("numberOfParticipants"),
+                        currentEntity.getDouble("range"));
+
             }
         }
         return null;

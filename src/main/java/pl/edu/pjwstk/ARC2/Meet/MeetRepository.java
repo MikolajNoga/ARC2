@@ -15,6 +15,6 @@ public interface MeetRepository {
 
     List<Value<?>> getListOfParticipantsInMeet(String meetId);
 
-    Entity getMeet(String username);
+    Meet getMeet(String username);
 
 }

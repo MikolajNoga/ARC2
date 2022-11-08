@@ -23,7 +23,7 @@ public class MeetController {
     }
 
     @GetMapping("/getMeet/{username}")
-    public String getMeet(@PathVariable(value = "username") String username){
+    public Meet getMeet(@PathVariable(value = "username") String username){
         return meetService.getMeet(username).toString();
     }
 

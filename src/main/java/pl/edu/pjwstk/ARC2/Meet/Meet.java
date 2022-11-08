@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 public class Meet {
-    private List<String> users;
+    private String users;
     private String mainUser;
     private int numberOfParticipants;
     private double range;
