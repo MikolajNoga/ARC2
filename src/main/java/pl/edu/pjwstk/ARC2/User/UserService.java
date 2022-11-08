@@ -20,6 +20,17 @@ public class UserService implements UserRepository {
         return datastore.run(query);
     }
 
+    private QueryResults<Entity> query(String locationX, String locationY) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("user")
+                .setFilter(StructuredQuery.PropertyFilter.eq("locationX", locationX))
+                .setFilter(StructuredQuery.PropertyFilter.eq("locationY", locationY))
+                .build();
+        return datastore.run(query);
+    }
+
+
+
     @Override
     public boolean setUserData(String username, String locationX, String locationY) {
         Key key = datastore.allocateId(keyFactory.newKey());
@@ -74,6 +85,20 @@ public class UserService implements UserRepository {
     public List<User> getUsersList() {
         List<User> listOfEntities = new ArrayList<>();
         QueryResults<Entity> results = query();
+        while (results.hasNext()) {
+            Entity currentEntity = results.next();
+            listOfEntities.add(new User(
+                    currentEntity.getString("username"),
+                    currentEntity.getString("locationX"),
+                    currentEntity.getString("locationY"),
+                    currentEntity.getBoolean("isSetToMeet")));
+        }
+        return listOfEntities;
+    }
+
+    public List<User> getUsersList(String locationX, String locationY) {
+        List<User> listOfEntities = new ArrayList<>();
+        QueryResults<Entity> results = query(locationX, locationY);
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             listOfEntities.add(new User(

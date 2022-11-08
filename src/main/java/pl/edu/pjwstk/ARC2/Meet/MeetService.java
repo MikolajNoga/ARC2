@@ -45,7 +45,14 @@ public class MeetService implements MeetRepository {
         setUserMeetAttendance(userService.getUserEntity(username));
         user.setSetToMeet(true);
 
-        List<User> allUsers = userService.getUsersList();
+        List<User> allUsers = new ArrayList<>();
+
+        for (int x = -1; x < 2; x++)
+            for (int y = -1; y < 2; y++){
+                allUsers.addAll(userService.getUsersList(String.valueOf(user.getIntVersionOfLocationX()+x),
+                        String.valueOf(user.getIntVersionOfLocationX()+y)));
+            }
+
 
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
