@@ -27,4 +27,13 @@ public class MeetController {
         return meetService.getMeet(username).toString();
     }
 
+    @GetMapping("/getNumberOfParticipants/{username}")
+    public String getNumberOfParticipants(@PathVariable(value = "username") String username){
+        return meetService.getNumberOfParticipantsInMeet(username);
+    }
+
+    @GetMapping("/getListOfUsersInMeet/{username}")
+    public String getListOfUsersInMeet(@PathVariable(value = "username") String username){
+        return meetService.getListOfParticipantsInMeet(username);
+    }
 }

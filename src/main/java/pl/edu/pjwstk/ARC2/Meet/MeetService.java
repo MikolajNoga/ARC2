@@ -90,18 +90,24 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public int getNumberOfParticipantsInMeet(String meetId) {
-        return getListOfParticipantsInMeet(meetId).size();
+    public String getNumberOfParticipantsInMeet(String username) {
+        QueryResults<Entity> results = query();
+        while (results.hasNext()) {
+            Entity currentEntity = results.next();
+            if (currentEntity.getString("username").equals(username))
+                return currentEntity.getString("numberOfParticipants");
+        }
+        return null;
     }
 
 
     @Override
-    public List<Value<?>> getListOfParticipantsInMeet(String meetId) {
+    public String getListOfParticipantsInMeet(String username) {
         QueryResults<Entity> results = query();
         while (results.hasNext()) {
             Entity currentEntity = results.next();
-            if (currentEntity.getString("id").equals(meetId))
-                return currentEntity.getList("participants");
+            if (currentEntity.getString("username").equals(username))
+                return currentEntity.getKey().getAncestors().get(0).getName();
         }
         return null;
     }

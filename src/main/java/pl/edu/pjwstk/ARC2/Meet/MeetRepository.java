@@ -11,9 +11,9 @@ import java.util.List;
 public interface MeetRepository {
     HttpStatus createMeet(String username, int numberOfParticipants, double range);
 
-    int getNumberOfParticipantsInMeet(String meetId);
+    String getNumberOfParticipantsInMeet(String meetId);
 
-    List<Value<?>> getListOfParticipantsInMeet(String meetId);
+    String getListOfParticipantsInMeet(String meetId);
 
     Meet getMeet(String username);
 
