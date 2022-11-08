@@ -40,6 +40,7 @@ public class MeetService implements MeetRepository {
     @Override
     public HttpStatus createMeet(String username, int numberOfParticipants, double range) {
         User user = userService.getUserData(username);
+        if (!user.isSetToMeet()) return HttpStatus.BAD_REQUEST;
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
         setUserMeetAttendance(userService.getUserEntity(username));
@@ -83,13 +84,13 @@ public class MeetService implements MeetRepository {
         Entity meet = Entity.newBuilder(taskKey1)
                 .set(
                         "username",
-                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(username).build())
                 .set(
                         "numberOfParticipants",
-                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).build())
                 .set(
                         "range",
-                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(String.valueOf(range)).build())
                 .build();
         datastore.put(meet);
 

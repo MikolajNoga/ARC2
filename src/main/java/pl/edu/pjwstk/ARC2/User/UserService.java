@@ -42,16 +42,16 @@ public class UserService implements UserRepository {
         Entity user = Entity.newBuilder(key)
                 .set(
                         "username",
-                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(username).build())
                 .set(
                         "locationX",
-                        StringValue.newBuilder(locationX).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(locationX).build())
                 .set(
                         "locationY",
-                        StringValue.newBuilder(locationY).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(locationY).build())
                 .set(
                         "isSetToMeet",
-                        BooleanValue.newBuilder(false).setExcludeFromIndexes(true).build()
+                        BooleanValue.newBuilder(false).build()
                 )
                 .build();
         datastore.put(user);
