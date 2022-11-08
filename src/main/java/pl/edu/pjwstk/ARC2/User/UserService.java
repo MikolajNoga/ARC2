@@ -23,8 +23,12 @@ public class UserService implements UserRepository {
     private QueryResults<Entity> query(String locationX, String locationY) {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("user")
-                .setFilter(StructuredQuery.PropertyFilter.eq("locationX", locationX))
-                .setFilter(StructuredQuery.PropertyFilter.eq("locationY", locationY))
+                .setFilter(
+                        StructuredQuery.CompositeFilter.and(
+                                StructuredQuery.PropertyFilter.eq("locationX", locationX),
+                                StructuredQuery.PropertyFilter.eq("locationY", locationY)
+                        )
+                )
                 .build();
         return datastore.run(query);
     }
