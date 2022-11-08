@@ -76,16 +76,13 @@ public class MeetService implements MeetRepository {
         Entity meet = Entity.newBuilder(taskKey1)
                 .set(
                         "username",
-                        username)
-//                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(username).setExcludeFromIndexes(true).build())
                 .set(
                         "numberOfParticipants",
-                        numberOfParticipants)
-//                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).setExcludeFromIndexes(true).build())
                 .set(
                         "range",
-                        range)
-//                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
+                        StringValue.newBuilder(String.valueOf(range)).setExcludeFromIndexes(true).build())
                 .build();
         datastore.put(meet);
 
@@ -118,8 +115,8 @@ public class MeetService implements MeetRepository {
                 return new Meet(
                         currentEntity.getKey().getName(),
                         currentEntity.getString("username"),
-                        (int) currentEntity.getLong("numberOfParticipants"),
-                        currentEntity.getDouble("range"));
+                        currentEntity.getString("numberOfParticipants"),
+                        currentEntity.getString("range"));
 
             }
         }

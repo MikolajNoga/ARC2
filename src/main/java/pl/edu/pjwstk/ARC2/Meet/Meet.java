@@ -10,8 +10,8 @@ import lombok.Setter;
 public class Meet {
     private String users;
     private String mainUser;
-    private int numberOfParticipants;
-    private double range;
+    private String numberOfParticipants;
+    private String range;
 
     @Override
     public String toString() {
