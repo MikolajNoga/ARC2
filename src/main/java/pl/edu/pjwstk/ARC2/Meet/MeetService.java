@@ -16,10 +16,9 @@ public class MeetService implements MeetRepository {
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private final UserService userService;
 
-    private QueryResults<Entity> query(String username) {
+    private QueryResults<Entity> query() {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("meet")
-                .setFilter(StructuredQuery.PropertyFilter.eq("username", username))
                 .build();
         return datastore.run(query);
     }
@@ -47,18 +46,24 @@ public class MeetService implements MeetRepository {
 
         List<User> allUsers = userService.getUsersList();
 
-//        user.setSetToMeet(true);
-
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
             if (nop >= numberOfParticipants) break;
             if (!userAddedToMeet.contains(allUsers.get(i)) && !allUsers.get(i).isSetToMeet() &&
                     isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
                             allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
+
+
                 userAddedToMeet.add(allUsers.get(i));
                 nop++;
             }
         }
+
+        for (User value : userAddedToMeet) {
+            Entity entity = userService.getUserEntity(value.getUsername());
+            if (!entity.getString("username").equals(username)) setUserMeetAttendance(entity);
+        }
+
         Key taskKey1 =
                 datastore
                         .newKeyFactory()
@@ -82,11 +87,6 @@ public class MeetService implements MeetRepository {
                 .build();
         datastore.put(meet);
 
-        for (User value : userAddedToMeet) {
-            Entity entity = userService.getUserEntity(value.getUsername());
-            if (!entity.getString("username").equals(username)) setUserMeetAttendance(entity);
-        }
-
         return HttpStatus.OK;
     }
 
@@ -98,7 +98,7 @@ public class MeetService implements MeetRepository {
 
     @Override
     public List<Value<?>> getListOfParticipantsInMeet(String meetId) {
-        QueryResults<Entity> results = query("");
+        QueryResults<Entity> results = query();
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             if (currentEntity.getString("id").equals(meetId))
@@ -109,7 +109,7 @@ public class MeetService implements MeetRepository {
 
     @Override
     public Entity getMeet(String username) {
-        QueryResults<Entity> results = query(username);
+        QueryResults<Entity> results = query();
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             if (currentEntity.getString("username").equals(username)) {
