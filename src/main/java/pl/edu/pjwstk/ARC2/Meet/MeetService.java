@@ -113,7 +113,7 @@ public class MeetService implements MeetRepository {
             Entity currentEntity = results.next();
             if (currentEntity.getString("username").equals(username)) {
                 return new Meet(
-                        currentEntity.getKey().getAncestors().toString(),
+                        currentEntity.getKey().getAncestors().get(0).getName(),
                         currentEntity.getString("username"),
                         currentEntity.getString("numberOfParticipants"),
                         currentEntity.getString("range"));
