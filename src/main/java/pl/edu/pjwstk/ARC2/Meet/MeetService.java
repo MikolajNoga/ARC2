@@ -50,7 +50,7 @@ public class MeetService implements MeetRepository {
         for (int x = -1; x < 2; x++)
             for (int y = -1; y < 2; y++){
                 allUsers.addAll(userService.getUsersList(String.valueOf(user.getIntVersionOfLocationX()+x),
-                        String.valueOf(user.getIntVersionOfLocationX()+y)));
+                        String.valueOf(user.getIntVersionOfLocationY()+y)));
             }
 
 
