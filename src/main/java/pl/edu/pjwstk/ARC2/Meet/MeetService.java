@@ -40,7 +40,7 @@ public class MeetService implements MeetRepository {
     @Override
     public HttpStatus createMeet(String username, int numberOfParticipants, double range) {
         User user = userService.getUserData(username);
-        if (!user.isSetToMeet()) return HttpStatus.BAD_REQUEST;
+        if (user.isSetToMeet()) return HttpStatus.BAD_REQUEST;
         List<User> userAddedToMeet = new ArrayList<>();
         userAddedToMeet.add(user);
         setUserMeetAttendance(userService.getUserEntity(username));
