@@ -88,7 +88,7 @@ public class MeetService implements MeetRepository {
         Entity meet = Entity.newBuilder(key)
                 .set("username", StringValue.newBuilder(username).build())
                 .set("numberOfParticipants", LongValue.newBuilder(numberOfParticipants).build())
-                .set("users", String.valueOf(StringValue.newBuilder(userAddedToMeet.toString())))
+                .set("users", StringValue.newBuilder(userAddedToMeet.toString()).build())
                 .build();
         datastore.put(meet);
 
