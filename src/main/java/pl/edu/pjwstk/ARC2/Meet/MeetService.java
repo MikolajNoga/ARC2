@@ -18,17 +18,18 @@ public class MeetService implements MeetRepository {
 
     private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("meet");
 
-    private QueryResults<Entity> query() {
-        Query<Entity> query = Query.newEntityQueryBuilder()
-                .setKind("meet")
-                .build();
-        return datastore.run(query);
-    }
-
     private QueryResults<Entity> query(String username) {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("meet")
                 .setFilter(StructuredQuery.PropertyFilter.eq("username", username))
+                .build();
+        return datastore.run(query);
+    }
+
+    private QueryResults<Entity> totalNumberOfMeetsQuery() {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("__Stat_Kind__")
+                .setFilter(StructuredQuery.PropertyFilter.eq("kind_name", "meet"))
                 .build();
         return datastore.run(query);
     }
@@ -40,11 +41,6 @@ public class MeetService implements MeetRepository {
                     .build();
             datastore.update(entity);
         }
-    }
-
-
-    private boolean isDistanceCloseEnough(double range, int x1, int y1, int x2, int y2) {
-        return Math.sqrt((Math.pow((x2 - x1), 2.0) + Math.pow((y2 - y1), 2.0))) <= range;
     }
 
     @Override
@@ -128,5 +124,16 @@ public class MeetService implements MeetRepository {
         }
         return null;
     }
+
+    @Override
+    public long getTotalNumberOfActiveMeets() {
+        QueryResults<Entity> results = totalNumberOfMeetsQuery();
+        if (results.hasNext()){
+            Entity currentEntity = results.next();
+            return currentEntity.getLong("count");
+        }
+        return -1;
+    }
+
 
 }

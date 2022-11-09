@@ -35,4 +35,10 @@ public class MeetController {
     public String getListOfUsersInMeet(@PathVariable(value = "username") String username){
         return meetService.getListOfParticipantsInMeet(username);
     }
+
+    @GetMapping("/getTotalNumberOfActiveMeets")
+    public long getTotalNumberOfActiveMeets(){
+        return meetService.getTotalNumberOfActiveMeets();
+    }
+
 }

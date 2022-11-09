@@ -13,4 +13,6 @@ public interface MeetRepository {
 
     Meet getMeet(String username);
 
+    long getTotalNumberOfActiveMeets();
+
 }
