@@ -10,15 +10,12 @@ import lombok.Setter;
 public class Meet {
     private String users;
     private String mainUser;
-    private String numberOfParticipants;
-    private String range;
+    private long numberOfParticipants;
 
     @Override
     public String toString() {
         return "Meet{" + "users=" + users + ", mainUser='" + mainUser +
-                ", numberOfParticipants=" + numberOfParticipants +
-                ", range=" + range +
-                '}';
+                ", numberOfParticipants=" + numberOfParticipants + '}';
     }
 
 }

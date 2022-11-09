@@ -16,6 +16,8 @@ public class MeetService implements MeetRepository {
     private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private final UserService userService;
 
+    private final KeyFactory keyFactory = datastore.newKeyFactory().setKind("meet");
+
     private QueryResults<Entity> query() {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("meet")
@@ -23,10 +25,18 @@ public class MeetService implements MeetRepository {
         return datastore.run(query);
     }
 
-    private void setUserMeetAttendance(Entity entity){
+    private QueryResults<Entity> query(String username) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("meet")
+                .setFilter(StructuredQuery.PropertyFilter.eq("username", username))
+                .build();
+        return datastore.run(query);
+    }
+
+    private void changeUserMeetAttendance(Entity entity) {
         if (entity != null) {
             entity = Entity.newBuilder(entity)
-                    .set("isSetToMeet", true)
+                    .set("isSetToMeet", !entity.getBoolean("isSetToMeet"))
                     .build();
             datastore.update(entity);
         }
@@ -38,59 +48,47 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public HttpStatus createMeet(String username, int numberOfParticipants, double range) {
+    public HttpStatus createMeet(String username, long numberOfParticipants) {
         User user = userService.getUserData(username);
         if (user.isSetToMeet()) return HttpStatus.BAD_REQUEST;
-        List<User> userAddedToMeet = new ArrayList<>();
-        userAddedToMeet.add(user);
-        setUserMeetAttendance(userService.getUserEntity(username));
+
+        List<String> userAddedToMeet = new ArrayList<>();
+        userAddedToMeet.add(user.getUsername());
+        changeUserMeetAttendance(userService.getUserEntity(username));
         user.setSetToMeet(true);
 
         List<User> allUsers = new ArrayList<>();
 
         for (int x = -1; x < 2; x++)
-            for (int y = -1; y < 2; y++){
-                allUsers.addAll(userService.getUsersList(String.valueOf(user.getIntVersionOfLocationX()+x),
-                        String.valueOf(user.getIntVersionOfLocationY()+y)));
+            for (int y = -1; y < 2; y++) {
+                allUsers.addAll(userService.getUsersList(
+                        user.getLocationX() + x,
+                        user.getLocationY() + y));
             }
 
 
         // nop is number of participants which track number of added to meet in for loop
         for (int i = 0, nop = 1; i < allUsers.size(); i++) {
             if (nop >= numberOfParticipants) break;
-            if (!userAddedToMeet.contains(allUsers.get(i)) && !allUsers.get(i).isSetToMeet() &&
-                    isDistanceCloseEnough(range, user.getIntVersionOfLocationX(), user.getIntVersionOfLocationY(),
-                            allUsers.get(i).getIntVersionOfLocationX(), allUsers.get(i).getIntVersionOfLocationY())) {
-                userAddedToMeet.add(allUsers.get(i));
+            if (!userAddedToMeet.contains(allUsers.get(i).getUsername()) && !allUsers.get(i).isSetToMeet()) {
+                userAddedToMeet.add(allUsers.get(i).getUsername());
                 nop++;
             }
         }
 
-        for (User value : userAddedToMeet) {
-            Entity entity = userService.getUserEntity(value.getUsername());
+        for (String value : userAddedToMeet) {
+            Entity entity = userService.getUserEntity(value);
             if (!entity.getString("username").equals(username)) {
-                setUserMeetAttendance(entity);
-                value.setSetToMeet(true);
+                changeUserMeetAttendance(entity);
             }
         }
 
-        Key taskKey1 =
-                datastore
-                        .newKeyFactory()
-                        .addAncestors(PathElement.of("user", userAddedToMeet.toString()))
-                        .setKind("meet")
-                        .newKey("newMeet");
+        Key key = datastore.allocateId(keyFactory.newKey());
 
-        Entity meet = Entity.newBuilder(taskKey1)
-                .set(
-                        "username",
-                        StringValue.newBuilder(username).build())
-                .set(
-                        "numberOfParticipants",
-                        StringValue.newBuilder(String.valueOf(numberOfParticipants)).build())
-                .set(
-                        "range",
-                        StringValue.newBuilder(String.valueOf(range)).build())
+        Entity meet = Entity.newBuilder(key)
+                .set("username", StringValue.newBuilder(username).build())
+                .set("numberOfParticipants", LongValue.newBuilder(numberOfParticipants).build())
+                .set("users", String.valueOf(StringValue.newBuilder(userAddedToMeet.toString())))
                 .build();
         datastore.put(meet);
 
@@ -98,43 +96,37 @@ public class MeetService implements MeetRepository {
     }
 
     @Override
-    public String getNumberOfParticipantsInMeet(String username) {
-        QueryResults<Entity> results = query();
-        while (results.hasNext()) {
+    public long getNumberOfParticipantsInMeet(String username) {
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()) {
             Entity currentEntity = results.next();
-            if (currentEntity.getString("username").equals(username))
-                return currentEntity.getString("numberOfParticipants");
+            return currentEntity.getLong("numberOfParticipants");
         }
-        return null;
+        return -1;
     }
 
 
     @Override
     public String getListOfParticipantsInMeet(String username) {
-        QueryResults<Entity> results = query();
-        while (results.hasNext()) {
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()) {
             Entity currentEntity = results.next();
-            if (currentEntity.getString("username").equals(username))
-                return currentEntity.getKey().getAncestors().get(0).getName();
+            return currentEntity.getKey().getAncestors().get(0).getName();
         }
         return null;
     }
 
     @Override
     public Meet getMeet(String username) {
-        QueryResults<Entity> results = query();
-        while (results.hasNext()) {
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()) {
             Entity currentEntity = results.next();
-            if (currentEntity.getString("username").equals(username)) {
-                return new Meet(
-                        currentEntity.getKey().getAncestors().get(0).getName(),
-                        currentEntity.getString("username"),
-                        currentEntity.getString("numberOfParticipants"),
-                        currentEntity.getString("range"));
-            }
+            return new Meet(
+                    currentEntity.getString("users"),
+                    currentEntity.getString("username"),
+                    currentEntity.getLong("numberOfParticipants"));
         }
         return null;
     }
-
 
 }

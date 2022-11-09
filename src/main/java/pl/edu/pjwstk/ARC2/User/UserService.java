@@ -20,19 +20,27 @@ public class UserService implements UserRepository {
         return datastore.run(query);
     }
 
-    private QueryResults<Entity> query(String locationX, String locationY) {
+    private QueryResults<Entity> query(String username) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+                .setKind("user")
+                .setFilter(StructuredQuery.PropertyFilter.eq("username", username))
+                .build();
+        return datastore.run(query);
+    }
+
+    private QueryResults<Entity> query(Long locationX, Long locationY) {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("user")
                 .setFilter(
                         StructuredQuery.CompositeFilter.and(
                                 StructuredQuery.PropertyFilter.eq("locationX", locationX),
-                                StructuredQuery.PropertyFilter.eq("locationY", locationY)
+                                StructuredQuery.PropertyFilter.eq("locationY", locationY),
+                                StructuredQuery.PropertyFilter.eq("isSetToMeet",false)
                         )
                 )
                 .build();
         return datastore.run(query);
     }
-
 
 
     @Override
@@ -45,10 +53,10 @@ public class UserService implements UserRepository {
                         StringValue.newBuilder(username).build())
                 .set(
                         "locationX",
-                        StringValue.newBuilder(locationX).build())
+                        LongValue.newBuilder(Long.parseLong(locationX)).build())
                 .set(
                         "locationY",
-                        StringValue.newBuilder(locationY).build())
+                        LongValue.newBuilder(Long.parseLong(locationY)).build())
                 .set(
                         "isSetToMeet",
                         BooleanValue.newBuilder(false).build()
@@ -60,27 +68,22 @@ public class UserService implements UserRepository {
 
     @Override
     public User getUserData(String username) {
-        QueryResults<Entity> results = query();
-        while (results.hasNext()) {
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()){
             Entity currentEntity = results.next();
-            if (currentEntity.getString("username").equals(username)) {
-                return new User(
-                        currentEntity.getString("username"),
-                        currentEntity.getString("locationX"),
-                        currentEntity.getString("locationY"),
-                        currentEntity.getBoolean("isSetToMeet"));
-            }
+            return new User(
+                    currentEntity.getString("username"),
+                    currentEntity.getLong("locationX"),
+                    currentEntity.getLong("locationY"),
+                    currentEntity.getBoolean("isSetToMeet"));
         }
         return null;
     }
 
     public Entity getUserEntity(String username) {
-        QueryResults<Entity> results = query();
-        while (results.hasNext()) {
-            Entity currentEntity = results.next();
-            if (currentEntity.getString("username").equals(username)) {
-                return currentEntity;
-            }
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()){
+            return results.next();
         }
         return null;
     }
@@ -93,22 +96,22 @@ public class UserService implements UserRepository {
             Entity currentEntity = results.next();
             listOfEntities.add(new User(
                     currentEntity.getString("username"),
-                    currentEntity.getString("locationX"),
-                    currentEntity.getString("locationY"),
+                    currentEntity.getLong("locationX"),
+                    currentEntity.getLong("locationY"),
                     currentEntity.getBoolean("isSetToMeet")));
         }
         return listOfEntities;
     }
 
-    public List<User> getUsersList(String locationX, String locationY) {
+    public List<User> getUsersList(Long locationX, Long locationY) {
         List<User> listOfEntities = new ArrayList<>();
         QueryResults<Entity> results = query(locationX, locationY);
         while (results.hasNext()) {
             Entity currentEntity = results.next();
             listOfEntities.add(new User(
                     currentEntity.getString("username"),
-                    currentEntity.getString("locationX"),
-                    currentEntity.getString("locationY"),
+                    currentEntity.getLong("locationX"),
+                    currentEntity.getLong("locationY"),
                     currentEntity.getBoolean("isSetToMeet")));
         }
         return listOfEntities;

@@ -14,12 +14,11 @@ public class MeetController {
 
     private final MeetService meetService;
 
-    @GetMapping("/createMeet/{username}/{numberOfParticipants}/{range}")
+    @GetMapping("/createMeet/{username}/{numberOfParticipants}")
     public HttpStatus createMeet(
             @PathVariable String numberOfParticipants,
-            @PathVariable String range,
             @PathVariable String username) {
-        return meetService.createMeet(username, Integer.parseInt(numberOfParticipants), Double.parseDouble(range));
+        return meetService.createMeet(username, Long.parseLong(numberOfParticipants));
     }
 
     @GetMapping("/getMeet/{username}")
@@ -28,7 +27,7 @@ public class MeetController {
     }
 
     @GetMapping("/getNumberOfParticipants/{username}")
-    public String getNumberOfParticipants(@PathVariable(value = "username") String username){
+    public Long getNumberOfParticipants(@PathVariable(value = "username") String username){
         return meetService.getNumberOfParticipantsInMeet(username);
     }
 

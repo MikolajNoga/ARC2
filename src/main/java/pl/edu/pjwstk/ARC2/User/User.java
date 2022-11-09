@@ -8,19 +8,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class User {
-    private String username, locationX, locationY;
+    private String username;
+
+    private Long locationX, locationY;
     private boolean isSetToMeet;
 
     @Override
     public String toString() {
-        return "User{ " + username + " : " + locationX + " : " + locationY + " : " + isSetToMeet + " }";
-    }
-
-    public int getIntVersionOfLocationX() {
-        return Integer.parseInt(locationX);
-    }
-
-    public int getIntVersionOfLocationY() {
-        return Integer.parseInt(locationY);
+        return "User{" + username + " : " + locationX + " : " + locationY + " : " + isSetToMeet + "}";
     }
 }

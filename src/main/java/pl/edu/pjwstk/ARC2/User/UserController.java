@@ -19,8 +19,7 @@ public class UserController {
             @PathVariable(value = "username") String username,
             @PathVariable(value = "locationX") String locationX,
             @PathVariable(value = "locationY") String locationY) {
-        if (userService.setUserData(username, locationX, locationY))
-            return HttpStatus.OK;
+        if (userService.setUserData(username, locationX, locationY)) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
     }
 
