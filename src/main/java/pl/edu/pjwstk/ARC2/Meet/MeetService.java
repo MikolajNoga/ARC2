@@ -111,7 +111,7 @@ public class MeetService implements MeetRepository {
         QueryResults<Entity> results = query(username);
         if (results.hasNext()) {
             Entity currentEntity = results.next();
-            return currentEntity.getKey().getAncestors().get(0).getName();
+            return currentEntity.getString("users");
         }
         return null;
     }
