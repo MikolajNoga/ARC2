@@ -41,4 +41,10 @@ public class MeetController {
         return meetService.getTotalNumberOfActiveMeets();
     }
 
+    @GetMapping("/closeMeet/{username}")
+    public HttpStatus closeMeet(@PathVariable(value = "username") String username){
+        if (meetService.closeMeet(username)) return HttpStatus.OK;
+        return HttpStatus.BAD_REQUEST;
+    }
+
 }

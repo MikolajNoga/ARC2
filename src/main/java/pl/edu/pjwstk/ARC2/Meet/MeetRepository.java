@@ -15,4 +15,6 @@ public interface MeetRepository {
 
     long getTotalNumberOfActiveMeets();
 
+    boolean closeMeet(String username);
+
 }

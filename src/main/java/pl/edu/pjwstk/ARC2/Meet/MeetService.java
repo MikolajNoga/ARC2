@@ -26,6 +26,9 @@ public class MeetService implements MeetRepository {
         return datastore.run(query);
     }
 
+    /* Jedna forma rozwiązania, problem jest tylko taki, że po dodaniu meet'a, __Stat_Kind__ nie
+     zaaktualizuje się od razu, tak jak jest to opisane w dokumentacji. Mimo wszystko jeśli nie zależy nam na bardzo
+     dokładnej ilości elementów rozwiązanie dobre */
     private QueryResults<Entity> totalNumberOfMeetsQuery() {
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("__Stat_Kind__")
@@ -33,6 +36,8 @@ public class MeetService implements MeetRepository {
                 .build();
         return datastore.run(query);
     }
+
+
 
     private void changeUserMeetAttendance(Entity entity) {
         if (entity != null) {
@@ -133,6 +138,19 @@ public class MeetService implements MeetRepository {
             return currentEntity.getLong("count");
         }
         return -1;
+    }
+
+    @Override
+    public boolean closeMeet(String username) {
+        QueryResults<Entity> results = query(username);
+        if (results.hasNext()){
+            Entity currentEntity = results.next();
+            String[] users = currentEntity.getString("users").replaceAll("(\\[|\\])","").split(",");
+            for(String temp: users) changeUserMeetAttendance(userService.getUserEntity(temp.trim()));
+            datastore.delete(currentEntity.getKey());
+            return true;
+        }
+        return false;
     }
 
 
