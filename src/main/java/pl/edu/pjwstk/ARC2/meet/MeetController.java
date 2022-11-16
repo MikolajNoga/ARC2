@@ -2,9 +2,7 @@ package pl.edu.pjwstk.ARC2.meet;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -12,11 +10,9 @@ public class MeetController {
 
     private final MeetService meetService;
 
-    @GetMapping("/createMeet/{username}/{numberOfParticipants}")
-    public HttpStatus createMeet(
-            @PathVariable String numberOfParticipants,
-            @PathVariable String username) {
-        return meetService.createMeet(username, Long.parseLong(numberOfParticipants));
+    @PostMapping("/createMeet")
+    public HttpStatus createMeet(@RequestBody MeetRequest request) {
+        return meetService.createMeet(request.getUsername(), Long.parseLong(request.getNumberOfParticipants()));
     }
 
     @GetMapping("/getMeet/{username}")
@@ -39,7 +35,7 @@ public class MeetController {
         return meetService.getTotalNumberOfActiveMeets();
     }
 
-    @GetMapping("/closeMeet/{username}")
+    @DeleteMapping("/closeMeet/{username}")
     public HttpStatus closeMeet(@PathVariable(value = "username") String username){
         if (meetService.closeMeet(username)) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;

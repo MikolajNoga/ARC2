@@ -12,14 +12,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/setUserData/{username}/{locationX}/{locationY}")
+    @PostMapping("/setUserData")
     public HttpStatus setUserData( @RequestBody UserRequest user) {
         if (userService.setUserData(user.getUsername(), user.getLocationX(), user.getLocationY())) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
-
-//        @PathVariable(value = "username") String username,
-//        @PathVariable(value = "locationX") String locationX,
-//        @PathVariable(value = "locationY") String locationY
     }
 
     @GetMapping("/getUsersList")
@@ -27,8 +23,8 @@ public class UserController {
         return userService.getUsersList();
     }
 
-    @PostMapping("/getUserData")
-    public User getUserData(@RequestBody String username) {
+    @GetMapping("/getUserData/{username}")
+    public User getUserData(@PathVariable(value = "username") String username) {
         return userService.getUserData(username);
     }
 
