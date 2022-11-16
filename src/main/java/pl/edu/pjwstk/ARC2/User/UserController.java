@@ -2,9 +2,7 @@ package pl.edu.pjwstk.ARC2.User;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,8 +26,8 @@ public class UserController {
         return userService.getUsersList();
     }
 
-    @GetMapping("/getUserData/{username}")
-    public User getUserData(@PathVariable(value = "username") String username) {
+    @PostMapping("/getUserData")
+    public User getUserData(@RequestBody String username) {
         return userService.getUserData(username);
     }
 
