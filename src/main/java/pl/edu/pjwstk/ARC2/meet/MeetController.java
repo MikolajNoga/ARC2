@@ -1,8 +1,6 @@
-package pl.edu.pjwstk.ARC2.Meet;
+package pl.edu.pjwstk.ARC2.meet;
 
-import com.google.cloud.datastore.Entity;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

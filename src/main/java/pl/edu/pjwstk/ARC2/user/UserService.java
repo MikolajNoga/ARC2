@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.ARC2.User;
+package pl.edu.pjwstk.ARC2.user;
 
 import com.google.cloud.datastore.*;
 import lombok.RequiredArgsConstructor;

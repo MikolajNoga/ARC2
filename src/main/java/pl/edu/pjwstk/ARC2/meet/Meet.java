@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.ARC2.Meet;
+package pl.edu.pjwstk.ARC2.meet;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

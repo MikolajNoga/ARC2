@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.ARC2.Meet;
+package pl.edu.pjwstk.ARC2.meet;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;

@@ -1,11 +1,11 @@
-package pl.edu.pjwstk.ARC2.Meet;
+package pl.edu.pjwstk.ARC2.meet;
 
 import com.google.cloud.datastore.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.edu.pjwstk.ARC2.User.User;
-import pl.edu.pjwstk.ARC2.User.UserService;
+import pl.edu.pjwstk.ARC2.user.User;
+import pl.edu.pjwstk.ARC2.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
