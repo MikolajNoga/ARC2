@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class UploadObject {
     public static void uploadObjectFromMemory(
-            String projectId, String bucketName, String objectName, byte[] contents) throws IOException {
+            String projectId, String bucketName, String objectName, byte[] contents, String contentType) throws IOException {
         // The ID of your GCP project
         // String projectId = "your-project-id";
 
@@ -29,7 +29,7 @@ public class UploadObject {
 
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         BlobId blobId = BlobId.of(bucketName, objectName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
 //        byte[] content = contents.getBytes(StandardCharsets.UTF_8);
         storage.createFrom(blobInfo, new ByteArrayInputStream(contents));
 
