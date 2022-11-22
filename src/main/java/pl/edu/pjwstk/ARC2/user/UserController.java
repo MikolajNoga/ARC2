@@ -16,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/setUserData", consumes = {MediaType.ALL_VALUE})
+    @PostMapping(value = "/setUserData", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public HttpStatus setUserData(@RequestBody UserRequest user) throws IOException {
         if (userService.setUserData(
                 user.getUsername(), user.getFile(), user.getLocationX(), user.getLocationY())) return HttpStatus.OK;
