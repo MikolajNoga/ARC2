@@ -52,7 +52,7 @@ public class UserService implements UserRepository {
 
         UploadObject.uploadObjectFromMemory(
                 "project-arc2",
-                "project-arc2.appspot.com/userPhotos",
+                "project-arc2.appspot.com",
                 username + "Photo",
                 file.getBytes());
 
