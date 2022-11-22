@@ -16,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/setUserData/{username}/{locationX}/{locationY}", headers = MediaType.ALL_VALUE)
+    @PostMapping(value = "/setUserData/{username}/{locationX}/{locationY}", consumes = MediaType.ALL_VALUE)
     public HttpStatus setUserData(
             @PathVariable(value = "username") String username,
             @PathVariable(value = "locationX") String locationX,
