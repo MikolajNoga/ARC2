@@ -21,7 +21,7 @@ public class UserController {
             @PathVariable(value = "username") String username,
             @PathVariable(value = "locationX") String locationX,
             @PathVariable(value = "locationY") String locationY,
-            @RequestBody MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file) throws IOException {
         if (userService.setUserData(username, file, locationX, locationY)) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
     }
