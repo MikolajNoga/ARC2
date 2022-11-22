@@ -3,7 +3,10 @@ package pl.edu.pjwstk.ARC2.user;
 import com.google.cloud.datastore.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pl.edu.pjwstk.ARC2.cloudstorage.UploadObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +47,14 @@ public class UserService implements UserRepository {
 
 
     @Override
-    public boolean setUserData(String username, String locationX, String locationY) {
+    public boolean setUserData(String username, String imagePath ,String locationX, String locationY) throws IOException {
         Key key = datastore.allocateId(keyFactory.newKey());
+
+        UploadObject.uploadObject(
+                "project-arc2",
+                "project-arc2.appspot.com/userPhotos",
+                username + "Photo",
+                imagePath);
 
         Entity user = Entity.newBuilder(key)
                 .set(
@@ -59,8 +68,7 @@ public class UserService implements UserRepository {
                         LongValue.newBuilder(Long.parseLong(locationY)).build())
                 .set(
                         "isSetToMeet",
-                        BooleanValue.newBuilder(false).build()
-                )
+                        BooleanValue.newBuilder(false).build())
                 .build();
         datastore.put(user);
         return true;
@@ -73,6 +81,7 @@ public class UserService implements UserRepository {
             Entity currentEntity = results.next();
             return new User(
                     currentEntity.getString("username"),
+                    currentEntity.getString("photoUrl"),
                     currentEntity.getLong("locationX"),
                     currentEntity.getLong("locationY"),
                     currentEntity.getBoolean("isSetToMeet"));
@@ -96,6 +105,7 @@ public class UserService implements UserRepository {
             Entity currentEntity = results.next();
             listOfEntities.add(new User(
                     currentEntity.getString("username"),
+                    currentEntity.getString("photoUrl"),
                     currentEntity.getLong("locationX"),
                     currentEntity.getLong("locationY"),
                     currentEntity.getBoolean("isSetToMeet")));
@@ -110,6 +120,7 @@ public class UserService implements UserRepository {
             Entity currentEntity = results.next();
             listOfEntities.add(new User(
                     currentEntity.getString("username"),
+                    currentEntity.getString("photoUrl"),
                     currentEntity.getLong("locationX"),
                     currentEntity.getLong("locationY"),
                     currentEntity.getBoolean("isSetToMeet")));

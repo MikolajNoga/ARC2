@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class UserRequest {
     private String username;
+    private String photoUrl;
     private String locationX;
     private String locationY;
 }
