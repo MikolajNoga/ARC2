@@ -5,14 +5,16 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class UploadObject {
-    public static void uploadObject(
-            String projectId, String bucketName, String objectName, String filePath) throws IOException {
-
+    public static void uploadObjectFromMemory(
+            String projectId, String bucketName, String objectName, byte[] contents) throws IOException {
         // The ID of your GCP project
         // String projectId = "your-project-id";
 
@@ -22,24 +24,14 @@ public class UploadObject {
         // The ID of your GCS object
         // String objectName = "your-object-name";
 
-        // The path to your file to upload
-        // String filePath = "path/to/your/file"
-
-        // Optional: set a generation-match precondition to avoid potential race
-        // conditions and data corruptions. The request returns a 412 error if the
-        // preconditions are not met.
-        // For a target object that does not yet exist, set the DoesNotExist precondition.
-        Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
-        // If the destination already exists in your bucket, instead set a generation-match
-        // precondition:
-        // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+        // The string of contents you wish to upload
+        // String contents = "Hello world!";
 
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)), precondition);
+//        byte[] content = contents.getBytes(StandardCharsets.UTF_8);
+        storage.createFrom(blobInfo, new ByteArrayInputStream(contents));
 
-//        System.out.println(
-//                "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
     }
 }

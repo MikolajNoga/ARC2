@@ -17,7 +17,7 @@ public class UserController {
     @PostMapping("/setUserData")
     public HttpStatus setUserData(@RequestBody UserRequest user) throws IOException {
         if (userService.setUserData(
-                user.getUsername(), user.getPhotoUrl(), user.getLocationX(), user.getLocationY())) return HttpStatus.OK;
+                user.getUsername(), user.getFile(), user.getLocationX(), user.getLocationY())) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
     }
 

@@ -47,14 +47,14 @@ public class UserService implements UserRepository {
 
 
     @Override
-    public boolean setUserData(String username, String imagePath ,String locationX, String locationY) throws IOException {
+    public boolean setUserData(String username, MultipartFile file ,String locationX, String locationY) throws IOException {
         Key key = datastore.allocateId(keyFactory.newKey());
 
-        UploadObject.uploadObject(
+        UploadObject.uploadObjectFromMemory(
                 "project-arc2",
                 "project-arc2.appspot.com/userPhotos",
                 username + "Photo",
-                imagePath);
+                file.getBytes());
 
         Entity user = Entity.newBuilder(key)
                 .set(

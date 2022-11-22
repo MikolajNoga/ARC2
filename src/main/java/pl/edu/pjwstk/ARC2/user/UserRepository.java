@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepository {
-    boolean setUserData(String username, String imagePath,String locationX, String locationY) throws IOException;
+    boolean setUserData(String username, MultipartFile file,String locationX, String locationY) throws IOException;
 
     User getUserData(String username);
 
