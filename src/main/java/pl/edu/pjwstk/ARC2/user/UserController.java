@@ -1,7 +1,9 @@
 package pl.edu.pjwstk.ARC2.user;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/setUserData")
+    @PostMapping(value = "/setUserData", consumes = {MediaType.ALL_VALUE})
     public HttpStatus setUserData(@RequestBody UserRequest user) throws IOException {
         if (userService.setUserData(
                 user.getUsername(), user.getFile(), user.getLocationX(), user.getLocationY())) return HttpStatus.OK;
