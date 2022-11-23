@@ -16,11 +16,11 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/setUserData/{username}/{locationX}/{locationY}", consumes = MediaType.ALL_VALUE)
+    @PostMapping(value = "/setUserData", consumes = MediaType.ALL_VALUE)
     public HttpStatus setUserData(
-            @PathVariable(value = "username") String username,
-            @PathVariable(value = "locationX") String locationX,
-            @PathVariable(value = "locationY") String locationY,
+            @RequestParam(value = "username") String username,
+            @RequestParam(value = "locationX") String locationX,
+            @RequestParam(value = "locationY") String locationY,
             @RequestParam("file") MultipartFile file) throws IOException {
         if (userService.setUserData(username, file, locationX, locationY)) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
