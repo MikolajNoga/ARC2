@@ -15,7 +15,7 @@ public class CheckImageController {
 
     @PostMapping(value = "/onNewImage", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus checkImage(@RequestBody JSONObject object){
-        System.out.println(object);
+        System.out.println(object.keySet());
         return HttpStatus.OK;
     }
 }
