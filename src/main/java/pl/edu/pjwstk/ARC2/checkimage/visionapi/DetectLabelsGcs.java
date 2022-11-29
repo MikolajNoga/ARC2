@@ -15,7 +15,7 @@ import java.util.List;
 public class DetectLabelsGcs {
     public static void detectLabelsGcs() throws IOException {
         // TODO(developer): Replace these variables before running the sample.
-        String filePath = "gs://your-gcs-bucket/path/to/image/file.jpg";
+        String filePath = "gs://project-arc2.appspot.com/userPhotos";
         detectLabelsGcs(filePath);
     }
 
