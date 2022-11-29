@@ -14,7 +14,6 @@ public class CheckImageController {
 
     @PostMapping("/onNewImage")
     public HttpStatus checkImage(@RequestBody JSONObject object){
-        System.out.println(object.get("data"));
         System.out.println(object);
         return HttpStatus.OK;
     }
