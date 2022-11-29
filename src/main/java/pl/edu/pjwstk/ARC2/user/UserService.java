@@ -72,7 +72,13 @@ public class UserService implements UserRepository {
                         BooleanValue.newBuilder(false).build())
                 .build();
         datastore.put(user);
+
+
         return true;
+    }
+
+    private void checkImage(){
+
     }
 
     @Override
