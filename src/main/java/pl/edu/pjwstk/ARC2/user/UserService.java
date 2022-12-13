@@ -4,11 +4,14 @@ import com.google.cloud.datastore.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.edu.pjwstk.ARC2.bigquery.TableInsertRows;
 import pl.edu.pjwstk.ARC2.cloudstorage.UploadObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -73,12 +76,22 @@ public class UserService implements UserRepository {
                 .build();
         datastore.put(user);
 
+        sendRowToBigQuery(username,locationX, locationY,false);
 
         return true;
     }
 
-    private void checkImage(){
+    private static void sendRowToBigQuery(String username, String locationX, String locationY, Boolean isSetToMeet){
+        String datasetName = "DataSet";
+        String tableName = "Users";
 
+        Map<String, Object> rowContent = new HashMap<>();
+        rowContent.put("isSetToMeet", isSetToMeet);
+        rowContent.put("locationX", Long.parseLong(locationX));
+        rowContent.put("locationY", Long.parseLong(locationY));
+        rowContent.put("username", username);
+
+        TableInsertRows.tableInsertRows(datasetName, tableName, rowContent);
     }
 
     @Override
