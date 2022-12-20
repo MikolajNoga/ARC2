@@ -1,6 +1,10 @@
 package pl.edu.pjwstk.ARC2.user;
 
 import com.google.cloud.datastore.*;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.gson.Gson;
+import com.google.protobuf.ByteString;
+import com.google.pubsub.v1.PubsubMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,6 +84,60 @@ public class UserService implements UserRepository {
 
         return true;
     }
+
+    public boolean register(String username, MultipartFile file, String locationX, String locationY) throws IOException {
+        // Create a new user entity and set its properties
+        Key key = datastore.allocateId(keyFactory.newKey());
+        UploadObject.uploadObjectFromMemory(
+                "project-arc2",
+                "project-arc2.appspot.com",
+                "userPhotos/" + username,
+                file.getBytes(),
+                file.getContentType());
+
+        Entity user = Entity.newBuilder(key)
+                .set("username", StringValue.newBuilder(username).build())
+                .set("locationX", LongValue.newBuilder(Long.parseLong(locationX)).build())
+                .set("locationY", LongValue.newBuilder(Long.parseLong(locationY)).build())
+                .set("isSetToMeet", BooleanValue.newBuilder(false).build())
+                .build();
+        datastore.put(user);
+
+        // Send a message to Pub/Sub with the new user data
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "new");
+        data.put("isSetToMeet", "false");
+        data.put("username", username);
+        data.put("locationX", locationX);
+        data.put("locationY", locationY);
+        sendMessageToPubSub(data);
+        return true;
+    }
+
+    private void sendMessageToPubSub(Map<String, String> data) throws IOException {
+        // Create a new publisher client
+        Publisher publisher = null;
+        try {
+            publisher = Publisher.newBuilder("projects/project-arc2/topics/new-user")
+                    .build();
+
+            // Convert the data map to a JSON string
+            String jsonData = new Gson().toJson(data);
+
+            // Send the message to Pub/Sub
+            ByteString messageBytes = ByteString.copyFromUtf8(jsonData);
+            PubsubMessage message = PubsubMessage.newBuilder().setData(messageBytes).build();
+            publisher.publish(message);
+        } finally {
+            // Shut down the publisher
+            if (publisher != null) {
+                publisher.shutdown();
+            }
+        }
+    }
+
+
+
 
     private static void sendRowToBigQuery(String username, String locationX, String locationY, Boolean isSetToMeet){
         String datasetName = "DataSet";

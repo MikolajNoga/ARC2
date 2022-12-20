@@ -22,7 +22,7 @@ public class UserController {
             @RequestParam(value = "locationX") String locationX,
             @RequestParam(value = "locationY") String locationY,
             @RequestParam("file") MultipartFile file) throws IOException {
-        if (userService.setUserData(username, file, locationX, locationY)) return HttpStatus.OK;
+        if (userService.register(username, file, locationX, locationY)) return HttpStatus.OK;
         return HttpStatus.BAD_REQUEST;
     }
 
