@@ -14,6 +14,10 @@ public class MeetController {
     public HttpStatus createMeet(@RequestBody MeetRequest request) {
         return meetService.createMeet(request.getUsername(), Long.parseLong(request.getNumberOfParticipants()));
     }
+    @PostMapping("/addUserToClosestMeet")
+    public HttpStatus addNewUserToMeetIfAvailable(@RequestBody MeetRequest request) {
+        return meetService.createMeet(request.getUsername(), Long.parseLong(request.getNumberOfParticipants()));
+    }
 
     @GetMapping("/getMeet/{username}")
     public String getMeet(@PathVariable(value = "username") String username){
