@@ -48,13 +48,6 @@ public class MeetService implements MeetRepository {
         }
     }
 
-    public HttpStatus addUserToMeet(String username, String locationX, String locationY) {
-
-
-
-
-        return HttpStatus.OK;
-    }
 
     @Override
     public HttpStatus createMeet(String username, long numberOfParticipants) {
@@ -103,6 +96,12 @@ public class MeetService implements MeetRepository {
 
         return HttpStatus.OK;
     }
+
+    public void addUserToClosestMeet(String username){
+        System.out.println(username);
+    }
+
+
 
     @Override
     public long getNumberOfParticipantsInMeet(String username) {

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.edu.pjwstk.ARC2.bigquery.TableInsertRows;
 import pl.edu.pjwstk.ARC2.cloudstorage.UploadObject;
 import pl.edu.pjwstk.ARC2.meet.MeetService;
+import pl.edu.pjwstk.ARC2.pubsub.PubSubPublisher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class UserService implements UserRepository {
 
 
     @Override
-    public boolean setUserData(String username, MultipartFile file ,String locationX, String locationY) throws IOException {
+    public boolean setUserData(String username, MultipartFile file ,String locationX, String locationY) throws IOException, InterruptedException {
         Key key = datastore.allocateId(keyFactory.newKey());
 
         UploadObject.uploadObjectFromMemory(
@@ -84,7 +85,8 @@ public class UserService implements UserRepository {
         datastore.put(user);
 
         sendRowToBigQuery(username,locationX, locationY,false);
-        meetService.addUserToMeet(username,locationX,locationY);
+
+        PubSubPublisher.publishWithErrorHandler(username);
 
         return true;
     }
